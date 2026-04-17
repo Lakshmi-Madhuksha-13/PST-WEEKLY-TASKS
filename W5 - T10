@@ -1,0 +1,88 @@
+import java.io.*;
+import java.math.*;
+import java.security.*;
+import java.text.*;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.regex.*;
+import java.util.stream.*;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
+
+class Result {
+
+    /*
+     * Complete the 'circularPalindromes' function below.
+     *
+     * The function is expected to return an INTEGER_ARRAY.
+     * The function accepts STRING s as parameter.
+     */
+public static List<Integer> circularPalindromes(String s) {
+
+    int n = s.length();
+    List<Integer> result = new ArrayList<>();
+
+    String doubled = s + s; // helps with rotations
+
+    for (int i = 0; i < n; i++) {
+
+        String rotated = doubled.substring(i, i + n);
+        result.add(longestPalindrome(rotated));
+    }
+
+    return result;
+}
+
+
+private static int longestPalindrome(String str) {
+
+    int n = str.length();
+    int maxLen = 1;
+
+    for (int center = 0; center < n; center++) {
+
+        // Odd length palindrome
+        int l = center, r = center;
+        while (l >= 0 && r < n && str.charAt(l) == str.charAt(r)) {
+            maxLen = Math.max(maxLen, r - l + 1);
+            l--;
+            r++;
+        }
+
+        // Even length palindrome
+        l = center;
+        r = center + 1;
+        while (l >= 0 && r < n && str.charAt(l) == str.charAt(r)) {
+            maxLen = Math.max(maxLen, r - l + 1);
+            l--;
+            r++;
+        }
+    }
+
+    return maxLen;
+}
+}
+
+public class Solution {
+    public static void main(String[] args) throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(System.getenv("OUTPUT_PATH")));
+
+        int n = Integer.parseInt(bufferedReader.readLine().trim());
+
+        String s = bufferedReader.readLine();
+
+        List<Integer> result = Result.circularPalindromes(s);
+
+        bufferedWriter.write(
+            result.stream()
+                .map(Object::toString)
+                .collect(joining("\n"))
+            + "\n"
+        );
+
+        bufferedReader.close();
+        bufferedWriter.close();
+    }
+}
